@@ -15,3 +15,11 @@ powerdns-remote-backend-*
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Editor
+.idea
+
+# Sonarqube
+report.json
+coverage.out
+.scannerwork
