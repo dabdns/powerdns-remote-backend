@@ -1,6 +1,6 @@
 GO=go
 
-all: build report.json coverage.out
+all: build test
 
 build: amd64 arm64
 
@@ -26,14 +26,17 @@ powerdns-remote-backend-darwin-arm64:
 powerdns-remote-backend-windows-arm64.exe:
 	env GOOS=windows GOARCH=arm64 go build -o powerdns-remote-backend-windows-arm64.exe
 
+test:
+	govet-report.json test-report.json coverage.out
+
 lint:
 	go help lint
 
-vet:
-	go vet
+govet-report.json:
+	go vet -json ./... > govet-report.json
 
-report.json:
-	go test -json ./... > report.json
+test-report.json:
+	go test -json ./... > test-report.json
 
 coverage.out:
 	go test -coverprofile=coverage.out ./...

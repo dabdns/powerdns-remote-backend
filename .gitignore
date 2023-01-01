@@ -20,6 +20,7 @@ powerdns-remote-backend-*
 .idea
 
 # Sonarqube
-report.json
+test-report.json
+govet-report.json
 coverage.out
 .scannerwork
