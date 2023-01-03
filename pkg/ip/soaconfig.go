@@ -1,9 +1,12 @@
 package ip
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/dabdns/powerdns-remote-backend/pkg/util"
+)
 
 const (
-	defaultSERIAL  uint32 = 01
+	defaultSERIAL  uint32 = 1
 	defaultREFRESH uint32 = 86400
 	defaultRETRY   uint32 = 7200
 	defaultEXPIRE  uint32 = 86400
@@ -31,11 +34,19 @@ func NewSOAConfig(mname string, rname string) SOAConfig {
 	}
 }
 
+func (soaConfig SOAConfig) Serial() string {
+	now := util.GetDefaultTimeProvider().Now()
+	return fmt.Sprintf("%s%02d",
+		now.Format("20060102"),
+		soaConfig.SERIAL,
+	)
+}
+
 func (soaConfig SOAConfig) Content() string {
-	return fmt.Sprintf("%s %s %d %d %d %d %d",
+	return fmt.Sprintf("%s %s %s %d %d %d %d",
 		soaConfig.MNAME,
 		soaConfig.RNAME,
-		soaConfig.SERIAL,
+		soaConfig.Serial(),
 		soaConfig.REFRESH,
 		soaConfig.RETRY,
 		soaConfig.EXPIRE,
