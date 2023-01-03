@@ -47,3 +47,9 @@ func (delegateIP *DelegateIP) GetAllDomains(_ bool) (domainInfoResultArray []bac
 	domainInfoResultArray = append(domainInfoResultArray, domainInfoResult)
 	return
 }
+
+func (delegateIP *DelegateIP) GetAllDomainMetadata(_ string) (metadata map[string][]string, err error) {
+	metadata = map[string][]string{}
+	metadata["PRESIGNED"] = []string{"0"}
+	return
+}

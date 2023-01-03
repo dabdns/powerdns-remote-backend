@@ -47,3 +47,16 @@ func (delegate *Delegate) GetAllDomains(includeDisabled bool) (domainInfoResultA
 	}
 	return
 }
+
+func (delegate *Delegate) GetAllDomainMetadata(qname string) (metadata map[string][]string, err error) {
+	metadata = map[string][]string{}
+	for _, backend := range delegate.Backends {
+		backendMetadata, backendErr := backend.GetAllDomainMetadata(qname)
+		if backendErr != nil {
+			err = backendErr
+		} else {
+			metadata = backendMetadata
+		}
+	}
+	return
+}

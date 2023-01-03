@@ -10,14 +10,16 @@ import (
 )
 
 const (
-	defaultHost   string = "localhost"
+	defaultHost   string = "0.0.0.0"
 	defaultPort   int16  = 8080
 	defaultDomain string = "example.com."
+	defaultMNAME  string = "ns.icann.org."
+	defaultRNAME  string = "noc.dns.icann.org."
 )
 
 func main() {
 	backendDelegate := backend.NewBackendDelegate()
-	soaConfig := ip.NewSOAConfig("ns.icann.org.", "noc.dns.icann.org.")
+	soaConfig := ip.NewSOAConfig(defaultMNAME, defaultRNAME)
 	backendDelegate.AddDelegate(ip.NewDelegateIP(defaultDomain, soaConfig))
 
 	var connector connectorBase.Connector

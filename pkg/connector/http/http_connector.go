@@ -6,17 +6,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/dabdns/powerdns-remote-backend/pkg/backend"
+	b "github.com/dabdns/powerdns-remote-backend/pkg/backend"
 )
 
 type ConnectorHTTP struct {
-	Backend backend.Backend
+	Backend b.Backend
 	Host    string
 	Port    int16
 	Router  *gin.Engine
 }
 
-func NewConnectorHTTP(backend backend.Backend, host string, port int16) *ConnectorHTTP {
+func NewConnectorHTTP(backend b.Backend, host string, port int16) *ConnectorHTTP {
 	gin.SetMode(gin.ReleaseMode)
 	return &ConnectorHTTP{
 		Backend: backend,
@@ -26,7 +26,7 @@ func NewConnectorHTTP(backend backend.Backend, host string, port int16) *Connect
 	}
 }
 
-func initializeHandler(backend backend.Backend) func(c *gin.Context) {
+func initializeHandler(backend b.Backend) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		initialized := backend.Initialize()
 		if initialized {
@@ -37,7 +37,10 @@ func initializeHandler(backend backend.Backend) func(c *gin.Context) {
 	}
 }
 
-func lookupHandler(backend backend.Backend) func(c *gin.Context) {
+func lookupHandler(backend b.Backend) func(c *gin.Context) {
+	type resultLookupResultArray struct {
+		Result []b.LookupResult `json:"result"`
+	}
 	return func(c *gin.Context) {
 		qname := c.Param("qname")
 		qtype := c.Param("qtype")
@@ -51,12 +54,15 @@ func lookupHandler(backend backend.Backend) func(c *gin.Context) {
 			c.Status(500)
 			c.Abort()
 		} else {
-			c.JSON(200, lookupResultArray)
+			responseBody := resultLookupResultArray{
+				Result: lookupResultArray,
+			}
+			c.JSON(200, responseBody)
 		}
 	}
 }
 
-func getAllDomainsHandler(backend backend.Backend) func(c *gin.Context) {
+func getAllDomainsHandler(backend b.Backend) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		includeDisabled := c.Query("includeDisabled") == "true"
 		domainInfoResultArray, err := backend.GetAllDomains(includeDisabled)
@@ -69,11 +75,31 @@ func getAllDomainsHandler(backend backend.Backend) func(c *gin.Context) {
 	}
 }
 
+func getAllDomainMetadataHandler(backend b.Backend) func(c *gin.Context) {
+	type resultLookupResultArray struct {
+		Result map[string][]string `json:"result"`
+	}
+	return func(c *gin.Context) {
+		qname := c.Param("qname")
+		metadata, err := backend.GetAllDomainMetadata(qname)
+		if err != nil {
+			c.Status(500)
+			c.Abort()
+		} else {
+			responseBody := resultLookupResultArray{
+				Result: metadata,
+			}
+			c.JSON(200, responseBody)
+		}
+	}
+}
+
 func (httpConnector *ConnectorHTTP) Config() (err error) {
 
 	httpConnector.Router.GET("dnsapi/initialize", initializeHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/lookup/:qname/:qtype", lookupHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/getAllDomains", getAllDomainsHandler(httpConnector.Backend))
+	httpConnector.Router.GET("dnsapi/getAllDomainMetadata/:qname", getAllDomainMetadataHandler(httpConnector.Backend))
 
 	return
 }

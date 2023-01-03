@@ -20,6 +20,11 @@ func (TestBackend) GetAllDomains(_ bool) (domainInfoResultArray []DomainInfoResu
 	return
 }
 
+func (TestBackend) GetAllDomainMetadata(_ string) (metadata map[string][]string, err error) {
+	metadata = map[string][]string{}
+	return
+}
+
 func TestNewBackendDelegate(t *testing.T) {
 	backendDelegate := NewBackendDelegate()
 	if backendDelegate == nil {

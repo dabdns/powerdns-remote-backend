@@ -1,7 +1,7 @@
 package backend
 
 type LookupResult struct {
-	QType   string `json:"qType"`
+	QType   string `json:"qtype"`
 	QName   string `json:"qname"`
 	Content string `json:"content"`
 	TTL     uint32 `json:"ttl"`
@@ -25,4 +25,5 @@ type Backend interface {
 
 	// Filling the Zone Cache:
 	GetAllDomains(includeDisabled bool) (domainInfoResultArray []DomainInfoResult, err error)
+	GetAllDomainMetadata(qname string) (metadata map[string][]string, err error)
 }
