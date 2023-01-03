@@ -17,7 +17,8 @@ const (
 
 func main() {
 	backendDelegate := backend.NewBackendDelegate()
-	backendDelegate.AddDelegate(ip.NewDelegateIP(defaultDomain))
+	soaConfig := ip.NewSOAConfig("ns.icann.org.", "noc.dns.icann.org.")
+	backendDelegate.AddDelegate(ip.NewDelegateIP(defaultDomain, soaConfig))
 
 	var connector connectorBase.Connector
 	o, _ := os.Stdout.Stat()

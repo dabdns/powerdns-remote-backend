@@ -8,16 +8,24 @@ const (
 	ANY        string = "ANY"
 	SOA        string = "SOA"
 	TXT        string = "TXT"
-	defaultTTL int16  = 60
+	defaultTTL uint32 = 60
 )
 
 type DelegateIP struct {
-	Domain string
+	Config *DelegateIPConfig
 }
 
-func NewDelegateIP(domain string) *DelegateIP {
+type DelegateIPConfig struct {
+	Domain    string
+	SOAConfig SOAConfig
+}
+
+func NewDelegateIP(domain string, soaConfig SOAConfig) *DelegateIP {
 	return &DelegateIP{
-		Domain: domain,
+		Config: &DelegateIPConfig{
+			Domain:    domain,
+			SOAConfig: soaConfig,
+		},
 	}
 }
 
@@ -25,11 +33,11 @@ func (*DelegateIP) Initialize() bool {
 	return true
 }
 
-func (*DelegateIP) GetAllDomains(_ bool) (domainInfoResultArray []backend.DomainInfoResult, err error) {
+func (delegateIP *DelegateIP) GetAllDomains(_ bool) (domainInfoResultArray []backend.DomainInfoResult, err error) {
 	domainInfoResultArray = []backend.DomainInfoResult{}
 	domainInfoResult := backend.DomainInfoResult{
 		ID:             1,
-		Zone:           "nip.kune.one.",
+		Zone:           delegateIP.Config.Domain,
 		Masters:        []string{"0.0.0.0"},
 		NotifiedSerial: 1,
 		Serial:         1,

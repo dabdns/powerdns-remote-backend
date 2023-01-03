@@ -7,42 +7,40 @@ import (
 const (
 	defaultAContent    string = "127.0.0.1"
 	defaultAAAAContent string = "::1"
-	defaultSOAContent  string = "ns1.kune.one. hostmaster.kune.one. 2012081600 7200 3600 1209600 3600"
 	defaultTXTContent  string = "foobar"
-	defaultQName       string = "nip.kune.one."
 )
 
-func (ipDelegate *DelegateIP) Lookup(qtype string, qname string, _ string) (lookupResultArray []backend.LookupResult, err error) {
+func (delegateIP *DelegateIP) Lookup(qtype string, qname string, _ string) (lookupResultArray []backend.LookupResult, err error) {
 	switch qtype {
 	case A:
-		lookupResultArray, err = ipDelegate.lookupA(qname)
+		lookupResultArray, err = delegateIP.lookupA(qname)
 	case AAAA:
-		lookupResultArray, err = ipDelegate.lookupAAAA(qname)
+		lookupResultArray, err = delegateIP.lookupAAAA(qname)
 	case ANY:
-		lookupResultArray, err = ipDelegate.lookupANY(qname)
+		lookupResultArray, err = delegateIP.lookupANY(qname)
 	case SOA:
-		lookupResultArray, err = ipDelegate.lookupSOA(qname)
+		lookupResultArray, err = delegateIP.lookupSOA(qname)
 	case TXT:
-		lookupResultArray, err = ipDelegate.lookupTXT(qname)
+		lookupResultArray, err = delegateIP.lookupTXT(qname)
 	default:
 		lookupResultArray = []backend.LookupResult{}
 	}
 	return
 }
 
-func (ipDelegate *DelegateIP) lookupANY(qname string) (lookupResultArray []backend.LookupResult, err error) {
+func (delegateIP *DelegateIP) lookupANY(qname string) (lookupResultArray []backend.LookupResult, err error) {
 	lookupResultArray = []backend.LookupResult{}
-	aLookupResultArray, aErr := ipDelegate.lookupA(qname)
+	aLookupResultArray, aErr := delegateIP.lookupA(qname)
 	if aErr != nil {
 		err = aErr
 	} else {
 		lookupResultArray = append(lookupResultArray, aLookupResultArray...)
-		aaaaLookupResultArray, aaaaErr := ipDelegate.lookupAAAA(qname)
+		aaaaLookupResultArray, aaaaErr := delegateIP.lookupAAAA(qname)
 		if aaaaErr != nil {
 			err = aaaaErr
 		} else {
 			lookupResultArray = append(lookupResultArray, aaaaLookupResultArray...)
-			txtLookupResultArray, txtErr := ipDelegate.lookupTXT(qname)
+			txtLookupResultArray, txtErr := delegateIP.lookupTXT(qname)
 			if txtErr != nil {
 				err = txtErr
 			} else {
@@ -77,13 +75,13 @@ func (*DelegateIP) lookupAAAA(qname string) (lookupResultArray []backend.LookupR
 	return
 }
 
-func (*DelegateIP) lookupSOA(_ string) (lookupResultArray []backend.LookupResult, err error) {
+func (delegateIP *DelegateIP) lookupSOA(_ string) (lookupResultArray []backend.LookupResult, err error) {
 	lookupResultArray = []backend.LookupResult{}
 	lookupResult := backend.LookupResult{
 		QType:   SOA,
-		QName:   defaultQName,
-		Content: defaultSOAContent,
-		TTL:     defaultTTL,
+		QName:   delegateIP.Config.Domain,
+		Content: delegateIP.Config.SOAConfig.Content(),
+		TTL:     delegateIP.Config.SOAConfig.TTL,
 	}
 	lookupResultArray = append(lookupResultArray, lookupResult)
 	return

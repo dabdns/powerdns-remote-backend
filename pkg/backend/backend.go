@@ -4,16 +4,16 @@ type LookupResult struct {
 	QType   string `json:"qType"`
 	QName   string `json:"qname"`
 	Content string `json:"content"`
-	TTL     int16  `json:"ttl"`
+	TTL     uint32 `json:"ttl"`
 }
 
 type DomainInfoResult struct {
-	ID             int16    `json:"id"`
+	ID             uint32   `json:"id"`
 	Zone           string   `json:"zone"`
 	Masters        []string `json:"masters"`
-	NotifiedSerial int16    `json:"notified_serial"`
-	Serial         int16    `json:"serial"`
-	LastCheck      int16    `json:"last_check"`
+	NotifiedSerial uint32   `json:"notified_serial"`
+	Serial         uint32   `json:"serial"`
+	LastCheck      uint32   `json:"last_check"`
 	Kind           string   `json:"kind"`
 }
 
