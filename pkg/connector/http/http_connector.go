@@ -12,11 +12,11 @@ import (
 type ConnectorHTTP struct {
 	Backend b.Backend
 	Host    string
-	Port    int16
+	Port    uint16
 	Router  *gin.Engine
 }
 
-func NewConnectorHTTP(backend b.Backend, host string, port int16) *ConnectorHTTP {
+func NewConnectorHTTP(backend b.Backend, host string, port uint16) *ConnectorHTTP {
 	gin.SetMode(gin.ReleaseMode)
 	return &ConnectorHTTP{
 		Backend: backend,

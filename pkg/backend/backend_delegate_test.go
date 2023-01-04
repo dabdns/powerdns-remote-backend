@@ -25,8 +25,8 @@ func (TestBackend) GetAllDomainMetadata(_ string) (metadata map[string][]string,
 	return
 }
 
-func TestNewBackendDelegate(t *testing.T) {
-	backendDelegate := NewBackendDelegate()
+func TestNewDelegate(t *testing.T) {
+	backendDelegate := NewDelegate()
 	if backendDelegate == nil {
 		t.FailNow()
 	}
@@ -34,7 +34,7 @@ func TestNewBackendDelegate(t *testing.T) {
 
 func TestDelegateAddDelegate(t *testing.T) {
 	testBackend := TestBackend{}
-	backendDelegate := NewBackendDelegate()
+	backendDelegate := NewDelegate()
 	backendDelegate.AddDelegate(testBackend)
 	if len(backendDelegate.Backends) != 1 && backendDelegate.Backends[0] != testBackend {
 		t.FailNow()

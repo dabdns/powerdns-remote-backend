@@ -1,0 +1,49 @@
+connector:
+  type: http
+  host: 0.0.0.0
+  port: 8080
+
+delegates:
+  - domain: nip.kune.one.
+    ttl: 60
+    initialize:
+      default: {}
+      entries: {}
+    lookup:
+      soa:
+        default:
+          mname: ns1.kune.one.
+          rname: nip.kune.one.
+          serial: 0
+          refresh: 86400
+          retry: 7200
+          expire: 86400
+          ttl: ~
+        entries: {}
+      a:
+        default: 127.0.0.1
+        entries:
+          ns1.kune.one: 82.66.188.8
+      aaaa:
+        default: ::1
+        entries:
+          ns1.kune.one: 2a01:e0a:250:6220::1
+      txt:
+        default: ~
+        entries:
+          test.kune.one.: test
+      mx:
+        default: ~
+        entries: {}
+      ns:
+        default: ~
+        entries:
+          nip.kune.one.: ns1.kune.one
+    getAllDomains:
+      default: ~
+      entries: {}
+    getAllDomainMetadata:
+      default: ~
+      entries:
+        nip.kune.one:
+          - PRESIGNED: ["0"]

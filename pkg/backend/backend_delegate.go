@@ -4,7 +4,7 @@ type Delegate struct {
 	Backends []Backend
 }
 
-func NewBackendDelegate() *Delegate {
+func NewDelegate() *Delegate {
 	return &Delegate{
 		Backends: []Backend{},
 	}

@@ -1,0 +1,68 @@
+{
+  "connector": {
+    "type": "http",
+    "host": "0.0.0.0",
+    "port": 8080
+  },
+  "delegates": [
+    {
+      "domain": "example.com.",
+      "ttl": 60,
+      "initialize": {
+        "default":  {},
+        "entries":  {}
+      },
+      "lookup": {
+        "soa": {
+          "default": {
+            "mname": "ns.icann.org.",
+            "rname": "noc.dns.icann.org.",
+            "serial": 1,
+            "refresh": 86400,
+            "retry": 7200,
+            "expire": 86400,
+            "ttl": null
+          },
+          "entries": {}
+        },
+        "a": {
+          "default": "127.0.0.1",
+          "entries": {}
+        },
+        "aaaa": {
+          "default": "::1",
+          "entries": {}
+        },
+        "txt": {
+          "default": null,
+          "entries": {}
+        }
+      },
+      "getAllDomains": {
+        "default": [
+          {
+            "id": 1,
+            "masters": [
+              "0.0.0.0"
+            ],
+            "notifiedSerial": 1,
+            "serial": 1,
+            "lastCheck": 0,
+            "kind": "native"
+          }
+        ],
+        "entries": {}
+      },
+      "getAllDomainMetadata": {
+        "default": [
+          {
+            "PRESIGNED": [
+              "0"
+            ]
+          }
+        ],
+        "entries": {}
+      }
+    }
+  ]
+}
