@@ -17,7 +17,7 @@ type ConnectorHTTP struct {
 }
 
 func NewConnectorHTTP(backend b.Backend, host string, port uint16) *ConnectorHTTP {
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 	return &ConnectorHTTP{
 		Backend: backend,
 		Host:    host,

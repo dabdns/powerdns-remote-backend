@@ -5,27 +5,37 @@ import (
 	"strings"
 )
 
-func (delegateBase *DelegateBase) Lookup(qtype string, qname string, _ string) (lookupResultArray []LookupResult, err error) {
+func (delegateBase *DelegateBase) Lookup(qtype string, qname string, zoneid string) (lookupResultArray []LookupResult, err error) {
+	lookupResultArray = []LookupResult{}
 	if strings.HasSuffix(qname, *delegateBase.Conf.Domain) {
+		var baseLookupResultArray []LookupResult
 		switch qtype {
 		case ANY:
-			lookupResultArray, err = delegateBase.lookupANY(qname)
+			baseLookupResultArray, err = delegateBase.lookupANY(qname)
 		case SOA:
-			lookupResultArray, err = delegateBase.lookupSOA(qname)
+			baseLookupResultArray, err = delegateBase.lookupSOA(qname)
 		case A:
-			lookupResultArray, err = delegateBase.lookupA(qname)
+			baseLookupResultArray, err = delegateBase.lookupA(qname)
 		case AAAA:
-			lookupResultArray, err = delegateBase.lookupAAAA(qname)
+			baseLookupResultArray, err = delegateBase.lookupAAAA(qname)
 		case NS:
-			lookupResultArray, err = delegateBase.lookupNS(qname)
+			baseLookupResultArray, err = delegateBase.lookupNS(qname)
 		case CNAME:
-			lookupResultArray, err = delegateBase.lookupCNAME(qname)
+			baseLookupResultArray, err = delegateBase.lookupCNAME(qname)
 		case DNAME:
-			lookupResultArray, err = delegateBase.lookupDNAME(qname)
+			baseLookupResultArray, err = delegateBase.lookupDNAME(qname)
 		case TXT:
-			lookupResultArray, err = delegateBase.lookupTXT(qname)
+			baseLookupResultArray, err = delegateBase.lookupTXT(qname)
 		default:
-			lookupResultArray = []LookupResult{}
+		}
+		lookupResultArray = append(lookupResultArray, baseLookupResultArray...)
+
+	}
+	if len(lookupResultArray) == 0 {
+		for _, resolver := range delegateBase.resolvers {
+			var resolverResultArray []LookupResult
+			resolverResultArray, err = resolver.Lookup(qtype, qname, zoneid)
+			lookupResultArray = append(lookupResultArray, resolverResultArray...)
 		}
 	}
 	return
@@ -74,13 +84,19 @@ func (delegateBase *DelegateBase) lookupA(qname string) (lookupResultArray []Loo
 
 func (delegateBase *DelegateBase) lookupAAAA(qname string) (lookupResultArray []LookupResult, err error) {
 	lookupResultArray = []LookupResult{}
-	lookupResult := LookupResult{
-		QType:   AAAA,
-		QName:   qname,
-		Content: *delegateBase.Conf.Lookup.AAAA.Default,
-		TTL:     *delegateBase.Conf.TTL,
+	aaaa := delegateBase.Conf.Lookup.AAAA.Entries[qname]
+	if aaaa == nil && strings.HasSuffix(qname, *delegateBase.Conf.Domain) {
+		aaaa = delegateBase.Conf.Lookup.AAAA.Default
 	}
-	lookupResultArray = append(lookupResultArray, lookupResult)
+	if aaaa != nil {
+		lookupResult := LookupResult{
+			QType:   AAAA,
+			QName:   qname,
+			Content: *aaaa,
+			TTL:     *delegateBase.Conf.TTL,
+		}
+		lookupResultArray = append(lookupResultArray, lookupResult)
+	}
 	return
 }
 
@@ -110,13 +126,19 @@ func (delegateBase *DelegateBase) lookupSOA(qname string) (lookupResultArray []L
 
 func (delegateBase *DelegateBase) lookupTXT(qname string) (lookupResultArray []LookupResult, err error) {
 	lookupResultArray = []LookupResult{}
-	lookupResult := LookupResult{
-		QType:   TXT,
-		QName:   qname,
-		Content: "~",
-		TTL:     *delegateBase.Conf.TTL,
+	txt := delegateBase.Conf.Lookup.TXT.Entries[qname]
+	if txt == nil && strings.HasSuffix(qname, *delegateBase.Conf.Domain) {
+		txt = delegateBase.Conf.Lookup.TXT.Default
 	}
-	lookupResultArray = append(lookupResultArray, lookupResult)
+	if txt != nil {
+		lookupResult := LookupResult{
+			QType:   TXT,
+			QName:   qname,
+			Content: *txt,
+			TTL:     *delegateBase.Conf.TTL,
+		}
+		lookupResultArray = append(lookupResultArray, lookupResult)
+	}
 	return
 }
 

@@ -26,11 +26,11 @@
           "entries": {}
         },
         "a": {
-          "default": "127.0.0.1",
+          "default": null,
           "entries": {}
         },
         "aaaa": {
-          "default": "::1",
+          "default": null,
           "entries": {}
         },
         "ns": {
@@ -48,7 +48,8 @@
         "txt": {
           "default": null,
           "entries": {}
-        }
+        },
+        "resolvers": []
       },
       "getAllDomains": {
         "default": [

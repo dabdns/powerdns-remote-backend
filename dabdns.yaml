@@ -1,6 +1,11 @@
 delegates:
   - domain: dev.dabdns.com.
     lookup:
+      resolvers:
+        - builtin:ipv4dotted
+        - builtin:ipv4dashed
+        - builtin:ipv4hexa
+        - builtin:ipv4b32crockford
       soa:
         default:
           mname: ns1.dabdns.com.
@@ -9,12 +14,11 @@ delegates:
         entries:
           ns1.dabdns.com.: 82.66.188.8
           test.dev.dabdns.com. : 192.168.0.1
+          0000000.dev.dabdns.com. : 127.0.0.1
       aaaa:
-        default: ::1
         entries:
           ns1.dabdns.com.: 2a01:e0a:250:6220::1
       ns:
-        default: ~
         entries:
           dev.dabdns.com.: ns1.dabdns.com.
     getAllDomainMetadata:

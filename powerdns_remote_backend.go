@@ -37,19 +37,25 @@ func loadConfig() (conf config.Config, err error) {
 
 func main() {
 	conf, err := loadConfig()
-	backendDelegate := backend.NewDelegate()
+	delegate := backend.NewDelegate()
 	for _, delegateConfig := range conf.Delegates {
-		backendDelegate.AddDelegate(backend.NewDelagateBase(*delegateConfig))
+		var delegateBase *backend.DelegateBase
+		delegateBase, err = backend.NewDelagateBase(delegateConfig)
+		if err == nil {
+			delegate.AddDelegate(delegateBase)
+		} else {
+			panic(err)
+		}
 	}
 
 	var connector connectorBase.Connector
 	o, _ := os.Stdout.Stat()
 	if (o.Mode() & os.ModeCharDevice) == os.ModeCharDevice {
 		//Display info to the terminal
-		connector = connectorHTTP.NewConnectorHTTP(backendDelegate, *conf.Connector.Host, *conf.Connector.Port)
+		connector = connectorHTTP.NewConnectorHTTP(delegate, *conf.Connector.Host, *conf.Connector.Port)
 	} else { //It is not the terminal
 		// Display info to a pipe
-		connector = connectorPipe.NewConnectorPipe(backendDelegate)
+		connector = connectorPipe.NewConnectorPipe(delegate)
 	}
 
 	err = connector.Config()

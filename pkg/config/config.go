@@ -10,7 +10,7 @@ import (
 
 var (
 	//go:embed config.json
-	ConfigFS embed.FS
+	embedFS embed.FS
 )
 
 type Config struct {
@@ -101,37 +101,45 @@ func (*DelegateInitializeConfig) Merge(_ *DelegateInitializeConfig) {
 }
 
 type DelegateLookupConfig struct {
-	SOA   *DelegateLookupSOAConfig  `json:"soa"`
-	A     *DelegateLookupAConfig    `json:"a"`
-	AAAA  *DelegateLookupAAAAConfig `json:"aaaa"`
-	NS    *DelegateLookupNSConfig   `json:"ns"`
-	CNAME *DelegateLookupNSConfig   `json:"cname"`
-	DNAME *DelegateLookupNSConfig   `json:"dname"`
-	TXT   *DelegateLookupTXTConfig  `json:"txt"`
+	SOA       *DelegateLookupSOAConfig  `json:"soa"`
+	A         *DelegateLookupAConfig    `json:"a"`
+	AAAA      *DelegateLookupAAAAConfig `json:"aaaa"`
+	NS        *DelegateLookupNSConfig   `json:"ns"`
+	CNAME     *DelegateLookupNSConfig   `json:"cname"`
+	DNAME     *DelegateLookupNSConfig   `json:"dname"`
+	TXT       *DelegateLookupTXTConfig  `json:"txt"`
+	Resolvers *[]string                 `json:"resolvers"`
 }
 
 func (d *DelegateLookupConfig) Merge(o *DelegateLookupConfig) {
 	if o != nil {
-		if o.SOA != nil {
-			d.SOA.Merge(o.SOA)
-		}
-		if o.A != nil {
-			d.A.Merge(o.A)
-		}
-		if o.AAAA != nil {
-			d.AAAA.Merge(o.AAAA)
-		}
-		if o.NS != nil {
-			d.NS.Merge(o.NS)
-		}
-		if o.CNAME != nil {
-			d.CNAME.Merge(o.CNAME)
-		}
-		if o.DNAME != nil {
-			d.DNAME.Merge(o.DNAME)
-		}
-		if o.TXT != nil {
-			d.TXT.Merge(o.TXT)
+		d.SOA.Merge(o.SOA)
+		d.A.Merge(o.A)
+		d.AAAA.Merge(o.AAAA)
+		d.NS.Merge(o.NS)
+		d.CNAME.Merge(o.CNAME)
+		d.DNAME.Merge(o.DNAME)
+		d.TXT.Merge(o.TXT)
+	}
+	d.MergeResolvers(o)
+}
+
+func (d *DelegateLookupConfig) MergeResolvers(o *DelegateLookupConfig) {
+	if o != nil {
+		if o.Resolvers != nil {
+			if d.Resolvers != nil {
+				resolvers := []string{}
+				i := 0
+				for ; i < len(*o.Resolvers); i = i + 1 {
+					resolvers = append(resolvers, (*o.Resolvers)[i])
+				}
+				for ; i < len(*d.Resolvers); i = i + 1 {
+					resolvers = append(resolvers, (*d.Resolvers)[i])
+				}
+				d.Resolvers = &resolvers
+			} else {
+				d.Resolvers = o.Resolvers
+			}
 		}
 	}
 }
@@ -432,13 +440,23 @@ func (d *DelegateGetAllDomainMetadataConfig) Merge(o *DelegateGetAllDomainMetada
 
 func GetDefaultConfig() (defaults Config) {
 	// Unmarshalling default config json
-	configData, err := ConfigFS.ReadFile("config.json")
+	configData, err := embedFS.ReadFile("config.json")
 	if err != nil {
-		panic(fmt.Errorf("Error reading embedded config.json, %s", err))
+		panic(fmt.Errorf("error reading embedded config.json, %s", err))
 	}
 	err = json.Unmarshal(configData, &defaults)
 	if err != nil {
-		panic(fmt.Errorf("Error unmarshalling default config json, %s", err))
+		panic(fmt.Errorf("error unmarshalling default config json, %s", err))
+	}
+	return
+}
+
+func (delegateConfig *DelegateConfig) AsMap() (settings map[string]interface{}, err error) {
+	settings = make(map[string]interface{})
+	var data []byte
+	data, err = json.Marshal(delegateConfig)
+	if err == nil {
+		err = json.Unmarshal(data, &settings)
 	}
 	return
 }

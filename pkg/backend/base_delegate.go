@@ -14,13 +14,36 @@ const (
 )
 
 type DelegateBase struct {
-	Conf config.DelegateConfig
+	Conf      *config.DelegateConfig
+	resolvers []Resolver
 }
 
-func NewDelagateBase(conf config.DelegateConfig) *DelegateBase {
-	return &DelegateBase{
-		Conf: conf,
+func NewDelagateBase(conf *config.DelegateConfig) (delegate *DelegateBase, err error) {
+	resolvers := []Resolver{}
+	if conf.Lookup.Resolvers != nil {
+		for _, resolverUri := range *conf.Lookup.Resolvers {
+			var resolver Resolver
+			var settings map[string]interface{}
+			settings, err = conf.AsMap()
+			if err == nil {
+				resolver, err = NewResolver(resolverUri, settings)
+				if err == nil {
+					resolvers = append(resolvers, resolver)
+				} else {
+					break
+				}
+			} else {
+				break
+			}
+		}
 	}
+	if err == nil {
+		delegate = &DelegateBase{
+			Conf:      conf,
+			resolvers: resolvers,
+		}
+	}
+	return
 }
 
 func (*DelegateBase) Initialize() bool {
