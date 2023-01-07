@@ -3,11 +3,14 @@ package backend
 import "github.com/dabdns/powerdns-remote-backend/pkg/config"
 
 const (
-	A    string = "A"
-	AAAA string = "AAAA"
-	ANY  string = "ANY"
-	SOA  string = "SOA"
-	TXT  string = "TXT"
+	ANY   string = "ANY"
+	SOA   string = "SOA"
+	A     string = "A"
+	AAAA  string = "AAAA"
+	NS    string = "NS"
+	CNAME string = "CNAME"
+	DNAME string = "DNAME"
+	TXT   string = "TXT"
 )
 
 type DelegateBase struct {
@@ -28,13 +31,13 @@ func (delegateBase *DelegateBase) GetAllDomains(_ bool) (domainInfoResultArray [
 	domainInfoResultArray = []DomainInfoResult{}
 	for _, getAllDomainsConfig := range delegateBase.Conf.GetAllDomains.Default {
 		domainInfoResult := DomainInfoResult{
-			ID:             getAllDomainsConfig.Id,
-			Zone:           delegateBase.Conf.Domain,
-			Masters:        getAllDomainsConfig.Masters,
-			NotifiedSerial: getAllDomainsConfig.NotifiedSerial,
-			Serial:         getAllDomainsConfig.Serial,
-			LastCheck:      getAllDomainsConfig.LastCheck,
-			Kind:           getAllDomainsConfig.Kind,
+			ID:             *getAllDomainsConfig.Id,
+			Zone:           *delegateBase.Conf.Domain,
+			Masters:        *getAllDomainsConfig.Masters,
+			NotifiedSerial: *getAllDomainsConfig.NotifiedSerial,
+			Serial:         *getAllDomainsConfig.Serial,
+			LastCheck:      *getAllDomainsConfig.LastCheck,
+			Kind:           *getAllDomainsConfig.Kind,
 		}
 		domainInfoResultArray = append(domainInfoResultArray, domainInfoResult)
 	}
@@ -43,7 +46,7 @@ func (delegateBase *DelegateBase) GetAllDomains(_ bool) (domainInfoResultArray [
 
 func (delegateBase *DelegateBase) GetAllDomainMetadata(qname string) (metadata map[string][]string, err error) {
 	metadata = map[string][]string{}
-	if qname == delegateBase.Conf.Domain {
+	if qname == *delegateBase.Conf.Domain {
 		metadata["PRESIGNED"] = []string{"0"}
 	}
 	return

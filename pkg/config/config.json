@@ -17,7 +17,7 @@
           "default": {
             "mname": "ns.icann.org.",
             "rname": "noc.dns.icann.org.",
-            "serial": 1,
+            "serial": 0,
             "refresh": 86400,
             "retry": 7200,
             "expire": 86400,
@@ -31,6 +31,18 @@
         },
         "aaaa": {
           "default": "::1",
+          "entries": {}
+        },
+        "ns": {
+          "default": null,
+          "entries": {}
+        },
+        "cname": {
+          "default": null,
+          "entries": {}
+        },
+        "dname": {
+          "default": null,
           "entries": {}
         },
         "txt": {

@@ -1,49 +1,23 @@
-connector:
-  type: http
-  host: 0.0.0.0
-  port: 8080
-
 delegates:
-  - domain: nip.kune.one.
-    ttl: 60
-    initialize:
-      default: {}
-      entries: {}
+  - domain: dev.dabdns.com.
     lookup:
       soa:
         default:
-          mname: ns1.kune.one.
-          rname: nip.kune.one.
-          serial: 0
-          refresh: 86400
-          retry: 7200
-          expire: 86400
-          ttl: ~
-        entries: {}
+          mname: ns1.dabdns.com.
+          rname: dev.dabdns.com.
       a:
-        default: 127.0.0.1
         entries:
-          ns1.kune.one: 82.66.188.8
+          ns1.dabdns.com.: 82.66.188.8
+          test.dev.dabdns.com. : 192.168.0.1
       aaaa:
         default: ::1
         entries:
-          ns1.kune.one: 2a01:e0a:250:6220::1
-      txt:
-        default: ~
-        entries:
-          test.kune.one.: test
-      mx:
-        default: ~
-        entries: {}
+          ns1.dabdns.com.: 2a01:e0a:250:6220::1
       ns:
         default: ~
         entries:
-          nip.kune.one.: ns1.kune.one
-    getAllDomains:
-      default: ~
-      entries: {}
+          dev.dabdns.com.: ns1.dabdns.com.
     getAllDomainMetadata:
-      default: ~
       entries:
-        nip.kune.one:
+        dev.dabdns.com.:
           - PRESIGNED: ["0"]
