@@ -30,7 +30,7 @@ func NewIPv4B32CrockfordResolver(settings map[string]interface{}) *IPv4B32Crockf
 	var ttl uint32
 	domain, _ = settings["domain"].(string)
 	ttl, _ = settings["ttl"].(uint32)
-	pattern = fmt.Sprintf("([0123456789abcdefghjkmnpqrstvwxyzABCDEFGHJKMNPQRSTVWXYZ]{5,7})\\.%s$", strings.ReplaceAll(domain, ".", "\\."))
+	pattern = fmt.Sprintf("(^|\\.)([0123456789abcdefghjkmnpqrstvwxyzABCDEFGHJKMNPQRSTVWXYZ]{5,7})\\.%s$", strings.ReplaceAll(domain, ".", "\\."))
 	re, _ := regexp.Compile(pattern)
 	return &IPv4B32CrockfordResolver{
 		settings: settings,
@@ -44,7 +44,7 @@ func (resolver *IPv4B32CrockfordResolver) Lookup(qtype string, qname string, _ s
 	if qtype == A || qtype == AAAA || qtype == ANY {
 		a := resolver.regexp.FindStringSubmatch(qname)
 		if len(a) > 1 {
-			lower := strings.ToLower(a[1])
+			lower := strings.ToLower(a[2])
 			if len(lower) == 6 {
 				// add padding
 				lower = fmt.Sprintf("0%s", lower)
