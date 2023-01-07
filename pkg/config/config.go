@@ -19,22 +19,28 @@ type Config struct {
 }
 
 func (c *Config) Merge(o *Config) {
-	if o.Connector != nil {
-		c.Connector.Merge(o.Connector)
-	}
-	if o.Delegates != nil {
-		delegates := []*DelegateConfig{}
-		i := 0
-		for ; i < len(o.Delegates); i = i + 1 {
-			if i < len(c.Delegates) {
-				c.Delegates[i].Merge(o.Delegates[i])
-				delegates = append(delegates, c.Delegates[i])
+	if o != nil {
+		if o.Connector != nil {
+			if c.Connector != nil {
+				c.Connector.Merge(o.Connector)
 			} else {
-				delegates = append(delegates, o.Delegates[i])
+				c.Connector = o.Connector
 			}
 		}
-		for ; i < len(c.Delegates); i = i + 1 {
-			delegates = append(delegates, c.Delegates[i])
+		if o.Delegates != nil {
+			delegates := []*DelegateConfig{}
+			i := 0
+			for ; i < len(o.Delegates); i = i + 1 {
+				if i < len(c.Delegates) {
+					c.Delegates[i].Merge(o.Delegates[i])
+					delegates = append(delegates, c.Delegates[i])
+				} else {
+					delegates = append(delegates, o.Delegates[i])
+				}
+			}
+			for ; i < len(c.Delegates); i = i + 1 {
+				delegates = append(delegates, c.Delegates[i])
+			}
 		}
 	}
 }
@@ -46,14 +52,16 @@ type ConnectorConfig struct {
 }
 
 func (c *ConnectorConfig) Merge(o *ConnectorConfig) {
-	if o.Type != nil {
-		c.Type = o.Type
-	}
-	if o.Host != nil {
-		c.Host = o.Host
-	}
-	if o.Port != nil {
-		c.Port = o.Port
+	if o != nil {
+		if o.Type != nil {
+			c.Type = o.Type
+		}
+		if o.Host != nil {
+			c.Host = o.Host
+		}
+		if o.Port != nil {
+			c.Port = o.Port
+		}
 	}
 }
 
@@ -67,20 +75,22 @@ type DelegateConfig struct {
 }
 
 func (d *DelegateConfig) Merge(o *DelegateConfig) {
-	if o.Domain != nil {
-		d.Domain = o.Domain
-	}
-	if o.Initialize != nil {
-		d.Initialize.Merge(o.Initialize)
-	}
-	if o.Lookup != nil {
-		d.Lookup.Merge(o.Lookup)
-	}
-	if o.GetAllDomains != nil {
-		d.GetAllDomains.Merge(o.GetAllDomains)
-	}
-	if o.GetAllDomainMetadata != nil {
-		d.GetAllDomainMetadata.Merge(o.GetAllDomainMetadata)
+	if o != nil {
+		if o.Domain != nil {
+			d.Domain = o.Domain
+		}
+		if o.Initialize != nil {
+			d.Initialize.Merge(o.Initialize)
+		}
+		if o.Lookup != nil {
+			d.Lookup.Merge(o.Lookup)
+		}
+		if o.GetAllDomains != nil {
+			d.GetAllDomains.Merge(o.GetAllDomains)
+		}
+		if o.GetAllDomainMetadata != nil {
+			d.GetAllDomainMetadata.Merge(o.GetAllDomainMetadata)
+		}
 	}
 }
 
@@ -101,26 +111,28 @@ type DelegateLookupConfig struct {
 }
 
 func (d *DelegateLookupConfig) Merge(o *DelegateLookupConfig) {
-	if o.SOA != nil {
-		d.SOA.Merge(o.SOA)
-	}
-	if o.A != nil {
-		d.A.Merge(o.A)
-	}
-	if o.AAAA != nil {
-		d.AAAA.Merge(o.AAAA)
-	}
-	if o.NS != nil {
-		d.NS.Merge(o.NS)
-	}
-	if o.CNAME != nil {
-		d.CNAME.Merge(o.CNAME)
-	}
-	if o.DNAME != nil {
-		d.DNAME.Merge(o.DNAME)
-	}
-	if o.TXT != nil {
-		d.TXT.Merge(o.TXT)
+	if o != nil {
+		if o.SOA != nil {
+			d.SOA.Merge(o.SOA)
+		}
+		if o.A != nil {
+			d.A.Merge(o.A)
+		}
+		if o.AAAA != nil {
+			d.AAAA.Merge(o.AAAA)
+		}
+		if o.NS != nil {
+			d.NS.Merge(o.NS)
+		}
+		if o.CNAME != nil {
+			d.CNAME.Merge(o.CNAME)
+		}
+		if o.DNAME != nil {
+			d.DNAME.Merge(o.DNAME)
+		}
+		if o.TXT != nil {
+			d.TXT.Merge(o.TXT)
+		}
 	}
 }
 
@@ -130,20 +142,22 @@ type DelegateLookupSOAConfig struct {
 }
 
 func (d *DelegateLookupSOAConfig) Merge(o *DelegateLookupSOAConfig) {
-	if o.Default != nil {
-		if d.Default != nil {
-			d.Default.Merge(o.Default)
-		} else {
-			d.Default = o.Default
-		}
-	}
-	if o.Entries != nil {
-		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+	if o != nil {
+		if o.Default != nil {
+			if d.Default != nil {
+				d.Default.Merge(o.Default)
+			} else {
+				d.Default = o.Default
 			}
-		} else {
-			d.Entries = o.Entries
+		}
+		if o.Entries != nil {
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
+			}
 		}
 	}
 }
@@ -159,26 +173,28 @@ type DelegateLookupSOAObjectConfig struct {
 }
 
 func (d *DelegateLookupSOAObjectConfig) Merge(o *DelegateLookupSOAObjectConfig) {
-	if o.MNAME != nil {
-		d.MNAME = o.MNAME
-	}
-	if o.RNAME != nil {
-		d.RNAME = o.RNAME
-	}
-	if o.SERIAL != nil {
-		d.SERIAL = o.SERIAL
-	}
-	if o.REFRESH != nil {
-		d.REFRESH = o.REFRESH
-	}
-	if o.RETRY != nil {
-		d.RETRY = o.RETRY
-	}
-	if o.EXPIRE != nil {
-		d.EXPIRE = o.EXPIRE
-	}
-	if o.TTL != nil {
-		d.TTL = o.TTL
+	if o != nil {
+		if o.MNAME != nil {
+			d.MNAME = o.MNAME
+		}
+		if o.RNAME != nil {
+			d.RNAME = o.RNAME
+		}
+		if o.SERIAL != nil {
+			d.SERIAL = o.SERIAL
+		}
+		if o.REFRESH != nil {
+			d.REFRESH = o.REFRESH
+		}
+		if o.RETRY != nil {
+			d.RETRY = o.RETRY
+		}
+		if o.EXPIRE != nil {
+			d.EXPIRE = o.EXPIRE
+		}
+		if o.TTL != nil {
+			d.TTL = o.TTL
+		}
 	}
 }
 
@@ -212,16 +228,18 @@ type DelegateLookupAConfig struct {
 }
 
 func (d *DelegateLookupAConfig) Merge(o *DelegateLookupAConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -232,16 +250,18 @@ type DelegateLookupAAAAConfig struct {
 }
 
 func (d *DelegateLookupAAAAConfig) Merge(o *DelegateLookupAAAAConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -252,16 +272,18 @@ type DelegateLookupTXTConfig struct {
 }
 
 func (d *DelegateLookupTXTConfig) Merge(o *DelegateLookupTXTConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -272,16 +294,18 @@ type DelegateLookupNSConfig struct {
 }
 
 func (d *DelegateLookupNSConfig) Merge(o *DelegateLookupNSConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -292,16 +316,18 @@ type DelegateLookupCNAMEConfig struct {
 }
 
 func (d *DelegateLookupCNAMEConfig) Merge(o *DelegateLookupCNAMEConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -312,16 +338,18 @@ type DelegateLookupDNAMEConfig struct {
 }
 
 func (d *DelegateLookupDNAMEConfig) Merge(o *DelegateLookupDNAMEConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -332,16 +360,18 @@ type DelegateGetAllDomainsConfig struct {
 }
 
 func (d *DelegateGetAllDomainsConfig) Merge(o *DelegateGetAllDomainsConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[k] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[k] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
@@ -356,23 +386,25 @@ type DelegateGetAllDomainsObjectConfig struct {
 }
 
 func (d *DelegateGetAllDomainsObjectConfig) Merge(o *DelegateGetAllDomainsObjectConfig) {
-	if o.Id != nil {
-		d.Id = o.Id
-	}
-	if o.Masters != nil {
-		d.Masters = o.Masters
-	}
-	if o.NotifiedSerial != nil {
-		d.NotifiedSerial = o.NotifiedSerial
-	}
-	if o.Serial != nil {
-		d.Serial = o.Serial
-	}
-	if o.LastCheck != nil {
-		d.LastCheck = o.LastCheck
-	}
-	if o.Kind != nil {
-		d.Kind = o.Kind
+	if o != nil {
+		if o.Id != nil {
+			d.Id = o.Id
+		}
+		if o.Masters != nil {
+			d.Masters = o.Masters
+		}
+		if o.NotifiedSerial != nil {
+			d.NotifiedSerial = o.NotifiedSerial
+		}
+		if o.Serial != nil {
+			d.Serial = o.Serial
+		}
+		if o.LastCheck != nil {
+			d.LastCheck = o.LastCheck
+		}
+		if o.Kind != nil {
+			d.Kind = o.Kind
+		}
 	}
 }
 
@@ -382,16 +414,18 @@ type DelegateGetAllDomainMetadataConfig struct {
 }
 
 func (d *DelegateGetAllDomainMetadataConfig) Merge(o *DelegateGetAllDomainMetadataConfig) {
-	if o.Default != nil {
-		d.Default = o.Default
-	}
-	if o.Entries != nil {
+	if o != nil {
+		if o.Default != nil {
+			d.Default = o.Default
+		}
 		if o.Entries != nil {
-			for k, v := range o.Entries {
-				d.Entries[strings.ToUpper(k)] = v
+			if o.Entries != nil {
+				for k, v := range o.Entries {
+					d.Entries[strings.ToUpper(k)] = v
+				}
+			} else {
+				d.Entries = o.Entries
 			}
-		} else {
-			d.Entries = o.Entries
 		}
 	}
 }
