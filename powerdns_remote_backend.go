@@ -7,6 +7,7 @@ import (
 	connectorBase "github.com/dabdns/powerdns-remote-backend/pkg/connector"
 	connectorHTTP "github.com/dabdns/powerdns-remote-backend/pkg/connector/http"
 	connectorPipe "github.com/dabdns/powerdns-remote-backend/pkg/connector/pipe"
+	connectorSocket "github.com/dabdns/powerdns-remote-backend/pkg/connector/socket"
 	"github.com/spf13/viper"
 
 	"os"
@@ -49,13 +50,14 @@ func main() {
 	}
 
 	var connector connectorBase.Connector
-	o, _ := os.Stdout.Stat()
-	if (o.Mode() & os.ModeCharDevice) == os.ModeCharDevice {
-		//Display info to the terminal
+	switch *conf.Connector.Type {
+	case "http":
 		connector = connectorHTTP.NewConnectorHTTP(delegate, *conf.Connector.Host, *conf.Connector.Port)
-	} else { //It is not the terminal
-		// Display info to a pipe
+	case "pipe":
 		connector = connectorPipe.NewConnectorPipe(delegate)
+	case "socket":
+		connector = connectorSocket.NewConnectorSocket(delegate)
+	default:
 	}
 
 	err = connector.Config()

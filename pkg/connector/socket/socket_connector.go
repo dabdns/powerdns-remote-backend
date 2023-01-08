@@ -8,8 +8,10 @@ type ConnectorSocket struct {
 	Backend backend.Backend
 }
 
-func NewConnectorSocket() *ConnectorSocket {
-	return &ConnectorSocket{}
+func NewConnectorSocket(backend backend.Backend) *ConnectorSocket {
+	return &ConnectorSocket{
+		Backend: backend,
+	}
 }
 
 func (*ConnectorSocket) Config() (err error) {
