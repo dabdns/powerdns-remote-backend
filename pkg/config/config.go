@@ -46,9 +46,12 @@ func (c *Config) Merge(o *Config) {
 }
 
 type ConnectorConfig struct {
-	Type *string `json:"type"`
-	Host *string `json:"host"`
-	Port *uint16 `json:"port"`
+	Type    *string `json:"type"`
+	Host    *string `json:"host"`
+	Port    *uint16 `json:"port"`
+	Network *string `json:"network"`
+	Address *string `json:"address"`
+	Timeout *int64  `json:"timeout"`
 }
 
 func (c *ConnectorConfig) Merge(o *ConnectorConfig) {
@@ -61,6 +64,12 @@ func (c *ConnectorConfig) Merge(o *ConnectorConfig) {
 		}
 		if o.Port != nil {
 			c.Port = o.Port
+		}
+		if o.Network != nil {
+			c.Network = o.Network
+		}
+		if o.Address != nil {
+			c.Address = o.Address
 		}
 	}
 }
@@ -439,6 +448,19 @@ func (d *DelegateGetAllDomainMetadataConfig) Merge(o *DelegateGetAllDomainMetada
 }
 
 func GetDefaultConfig() (defaults Config) {
+	// Unmarshalling default config json
+	configData, err := embedFS.ReadFile("config.json")
+	if err != nil {
+		panic(fmt.Errorf("error reading embedded config.json, %s", err))
+	}
+	err = json.Unmarshal(configData, &defaults)
+	if err != nil {
+		panic(fmt.Errorf("error unmarshalling default config json, %s", err))
+	}
+	return
+}
+
+func GetDefaultConfigMap() (defaults map[string]interface{}) {
 	// Unmarshalling default config json
 	configData, err := embedFS.ReadFile("config.json")
 	if err != nil {

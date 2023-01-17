@@ -14,6 +14,13 @@ func (delegate *Delegate) AddDelegate(backend Backend) {
 	delegate.Backends = append(delegate.Backends, backend)
 }
 
+func (delegate *Delegate) Service(req *Request, resp *Response) (err error) {
+	for _, backend := range delegate.Backends {
+		err = backend.Service(req, resp)
+	}
+	return
+}
+
 func (delegate *Delegate) Initialize() bool {
 	var initialized = true
 	for _, backend := range delegate.Backends {

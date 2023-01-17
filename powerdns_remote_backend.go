@@ -22,7 +22,9 @@ func loadConfig() (conf config.Config, err error) {
 	v.SetConfigName("dabdns")
 	v.SetEnvPrefix("dabdns")
 	v.AutomaticEnv()
-	err = v.ReadInConfig()
+	defaultsMap := config.GetDefaultConfigMap()
+	err = v.MergeConfigMap(defaultsMap)
+	err = v.MergeInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
 			panic(fmt.Errorf("Error reading config file, %s", err))
@@ -56,7 +58,7 @@ func main() {
 	case "pipe":
 		connector = connectorPipe.NewConnectorPipe(delegate)
 	case "socket":
-		connector = connectorSocket.NewConnectorSocket(delegate)
+		connector = connectorSocket.NewConnectorSocket(delegate, *conf.Connector.Network, *conf.Connector.Address, *conf.Connector.Timeout)
 	default:
 	}
 

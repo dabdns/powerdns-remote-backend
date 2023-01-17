@@ -10,6 +10,10 @@ func (TestBackend) Initialize() bool {
 	return true
 }
 
+func (TestBackend) Service(_ *Request, _ *Response) (err error) {
+	return
+}
+
 func (TestBackend) Lookup(_ string, _ string, _ string) (lookupResultArray []LookupResult, err error) {
 	lookupResultArray = []LookupResult{}
 	return

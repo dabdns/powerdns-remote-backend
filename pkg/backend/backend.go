@@ -1,5 +1,15 @@
 package backend
 
+type Request struct {
+	Method     string                 `json:"method"`
+	Parameters map[string]interface{} `json:"parameters"`
+}
+
+type Response struct {
+	Result interface{} `json:"result"`
+	Log    []string    `json:"log"` // logged in PowerDNS at loglevel info (6).
+}
+
 type LookupResult struct {
 	QType   string `json:"qtype"`
 	QName   string `json:"qname"`
@@ -19,6 +29,7 @@ type DomainInfoResult struct {
 
 // Backend @see https://doc.powerdns.com/authoritative/backends/remote.html
 type Backend interface {
+	Service(req *Request, resp *Response) (err error)
 	// Always required:
 	Initialize() bool
 	Lookup(qtype string, qname string, zoneId string) (lookupResultArray []LookupResult, err error)

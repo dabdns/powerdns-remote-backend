@@ -26,6 +26,23 @@ func NewConnectorHTTP(backend b.Backend, host string, port uint16) *ConnectorHTT
 	}
 }
 
+func serviceHandler(backend b.Backend) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		var req b.Request
+		var resp b.Response
+		if c.Bind(&req) == nil {
+			err := backend.Service(&req, &resp)
+			if err == nil {
+				c.JSON(200, resp)
+			} else {
+				c.JSON(500, resp)
+			}
+		} else {
+			c.JSON(400, resp)
+		}
+	}
+}
+
 func initializeHandler(backend b.Backend) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		initialized := backend.Initialize()
@@ -96,6 +113,7 @@ func getAllDomainMetadataHandler(backend b.Backend) func(c *gin.Context) {
 
 func (httpConnector *ConnectorHTTP) Config() (err error) {
 
+	httpConnector.Router.POST("dnsapi/service", serviceHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/initialize", initializeHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/lookup/:qname/:qtype", lookupHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/getAllDomains", getAllDomainsHandler(httpConnector.Backend))

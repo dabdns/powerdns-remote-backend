@@ -2,7 +2,10 @@
   "connector": {
     "type": "http",
     "host": "0.0.0.0",
-    "port": 8080
+    "port": 8080,
+    "network": "unix",
+    "address": "example.sock",
+    "timeout": 2000
   },
   "delegates": [
     {
