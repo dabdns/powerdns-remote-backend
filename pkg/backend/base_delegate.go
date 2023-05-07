@@ -16,6 +16,7 @@ const (
 	METHOD_LOOKUP               string = "lookup"
 	METHOD_GETALLDOMAINS        string = "getalldomains"
 	METHOD_GETALLDOMAINMETADATA string = "getalldomainmetadata"
+	METHOD_GETDOMAINMETADATA    string = "getdomainmetadata"
 
 	PARAM_QTYPE string = "qtype"
 	PARAM_QNAME string = "qname"
@@ -87,17 +88,30 @@ func (*DelegateBase) Initialize() bool {
 
 func (delegateBase *DelegateBase) GetAllDomains(_ bool) (domainInfoResultArray []DomainInfoResult, err error) {
 	domainInfoResultArray = []DomainInfoResult{}
-	for _, getAllDomainsConfig := range delegateBase.Conf.GetAllDomains.Default {
+	if len(delegateBase.Conf.GetAllDomains.Entries) == 0 {
 		domainInfoResult := DomainInfoResult{
-			ID:             *getAllDomainsConfig.Id,
-			Zone:           *delegateBase.Conf.Domain,
-			Masters:        *getAllDomainsConfig.Masters,
-			NotifiedSerial: *getAllDomainsConfig.NotifiedSerial,
-			Serial:         *getAllDomainsConfig.Serial,
-			LastCheck:      *getAllDomainsConfig.LastCheck,
-			Kind:           *getAllDomainsConfig.Kind,
+			//ID:             *delegateBase.Conf.GetAllDomains.Default.Id,
+			Zone: *delegateBase.Conf.Domain,
+			//Masters:        *delegateBase.Conf.GetAllDomains.Default.Masters,
+			//NotifiedSerial: *delegateBase.Conf.GetAllDomains.Default.NotifiedSerial,
+			//Serial:         *delegateBase.Conf.GetAllDomains.Default.Serial,
+			//LastCheck:      *delegateBase.Conf.GetAllDomains.Default.LastCheck,
+			//Kind:           *delegateBase.Conf.GetAllDomains.Default.Kind,
 		}
 		domainInfoResultArray = append(domainInfoResultArray, domainInfoResult)
+	} else {
+		for domain, _ := range delegateBase.Conf.GetAllDomains.Entries {
+			domainInfoResult := DomainInfoResult{
+				//ID:             *getAllDomainsConfig.Id,
+				Zone: domain,
+				//Masters:        *getAllDomainsConfig.Masters,
+				//NotifiedSerial: *getAllDomainsConfig.NotifiedSerial,
+				//Serial:         *getAllDomainsConfig.Serial,
+				//LastCheck:      *getAllDomainsConfig.LastCheck,
+				//Kind:           *getAllDomainsConfig.Kind,
+			}
+			domainInfoResultArray = append(domainInfoResultArray, domainInfoResult)
+		}
 	}
 	return
 }
@@ -106,6 +120,14 @@ func (delegateBase *DelegateBase) GetAllDomainMetadata(qname string) (metadata m
 	metadata = map[string][]string{}
 	if qname == *delegateBase.Conf.Domain {
 		metadata["PRESIGNED"] = []string{"0"}
+	}
+	return
+}
+
+func (delegateBase *DelegateBase) GetDomainMetadata(qname string) (metadata []string, err error) {
+	metadata = []string{}
+	if qname == *delegateBase.Conf.Domain {
+		metadata = []string{"0"}
 	}
 	return
 }

@@ -55,18 +55,15 @@
         "resolvers": []
       },
       "getAllDomains": {
-        "default": [
-          {
-            "id": 1,
-            "masters": [
-              "0.0.0.0"
-            ],
-            "notifiedSerial": 1,
-            "serial": 1,
+        "default": {
+            "id": -1,
+            "masters": [],
+            "notifiedSerial": -1,
+            "serial": 0,
             "lastCheck": 0,
-            "kind": "native"
+            "kind": "NATIVE"
           }
-        ],
+        ,
         "entries": {}
       },
       "getAllDomainMetadata": {

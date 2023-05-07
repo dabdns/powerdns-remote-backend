@@ -67,3 +67,16 @@ func (delegate *Delegate) GetAllDomainMetadata(qname string) (metadata map[strin
 	}
 	return
 }
+
+func (delegate *Delegate) GetDomainMetadata(qname string) (metadata []string, err error) {
+	metadata = []string{}
+	for _, backend := range delegate.Backends {
+		backendMetadata, backendErr := backend.GetDomainMetadata(qname)
+		if backendErr != nil {
+			err = backendErr
+		} else {
+			metadata = backendMetadata
+		}
+	}
+	return
+}

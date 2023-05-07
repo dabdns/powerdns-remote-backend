@@ -18,13 +18,13 @@ type LookupResult struct {
 }
 
 type DomainInfoResult struct {
-	ID             uint32   `json:"id"`
-	Zone           string   `json:"zone"`
-	Masters        []string `json:"masters"`
-	NotifiedSerial uint32   `json:"notified_serial"`
-	Serial         uint32   `json:"serial"`
-	LastCheck      uint32   `json:"last_check"`
-	Kind           string   `json:"kind"`
+	//ID             int32    `json:"id"`
+	Zone string `json:"zone"`
+	//Masters        []string `json:"masters"`
+	//NotifiedSerial int32    `json:"notified_serial"`
+	//Serial         uint32   `json:"serial"`
+	//LastCheck      uint32   `json:"last_check"`
+	//Kind           string   `json:"kind"`
 }
 
 // Backend @see https://doc.powerdns.com/authoritative/backends/remote.html
@@ -37,4 +37,5 @@ type Backend interface {
 	// Filling the Zone Cache:
 	GetAllDomains(includeDisabled bool) (domainInfoResultArray []DomainInfoResult, err error)
 	GetAllDomainMetadata(qname string) (metadata map[string][]string, err error)
+	GetDomainMetadata(qname string) (metadata []string, err error)
 }

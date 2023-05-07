@@ -4,8 +4,9 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
-	"github.com/dabdns/powerdns-remote-backend/pkg/util"
 	"strings"
+
+	"github.com/dabdns/powerdns-remote-backend/pkg/util"
 )
 
 var (
@@ -372,8 +373,8 @@ func (d *DelegateLookupDNAMEConfig) Merge(o *DelegateLookupDNAMEConfig) {
 }
 
 type DelegateGetAllDomainsConfig struct {
-	Default []*DelegateGetAllDomainsObjectConfig            `json:"default"`
-	Entries map[string][]*DelegateGetAllDomainsObjectConfig `json:"entries"`
+	Default *DelegateGetAllDomainsObjectConfig            `json:"default"`
+	Entries map[string]*DelegateGetAllDomainsObjectConfig `json:"entries"`
 }
 
 func (d *DelegateGetAllDomainsConfig) Merge(o *DelegateGetAllDomainsConfig) {
@@ -394,10 +395,10 @@ func (d *DelegateGetAllDomainsConfig) Merge(o *DelegateGetAllDomainsConfig) {
 }
 
 type DelegateGetAllDomainsObjectConfig struct {
-	Id             *uint32   `json:"id"`
+	Id             *int32    `json:"id"`
 	Masters        *[]string `json:"masters"`
-	NotifiedSerial *uint32   `json:"notifiedSerial"`
-	Serial         *uint32   `json:"serial"`
+	NotifiedSerial *int32    `json:"notifiedSerial"`
+	Serial         *uint32    `json:"serial"`
 	LastCheck      *uint32   `json:"lastCheck"`
 	Kind           *string   `json:"kind"`
 }

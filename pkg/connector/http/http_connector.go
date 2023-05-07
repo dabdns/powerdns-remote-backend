@@ -80,6 +80,9 @@ func lookupHandler(backend b.Backend) func(c *gin.Context) {
 }
 
 func getAllDomainsHandler(backend b.Backend) func(c *gin.Context) {
+	type resultGetAllDomainsResultArray struct {
+		Result []b.DomainInfoResult `json:"result"`
+	}
 	return func(c *gin.Context) {
 		includeDisabled := c.Query("includeDisabled") == "true"
 		domainInfoResultArray, err := backend.GetAllDomains(includeDisabled)
@@ -87,7 +90,10 @@ func getAllDomainsHandler(backend b.Backend) func(c *gin.Context) {
 			c.Status(500)
 			c.Abort()
 		} else {
-			c.JSON(200, domainInfoResultArray)
+			responseBody := resultGetAllDomainsResultArray{
+				Result: domainInfoResultArray,
+			}
+			c.JSON(200, responseBody)
 		}
 	}
 }
@@ -111,6 +117,25 @@ func getAllDomainMetadataHandler(backend b.Backend) func(c *gin.Context) {
 	}
 }
 
+func getDomainMetadataHandler(backend b.Backend) func(c *gin.Context) {
+	type resultDomainMetadataResultArray struct {
+		Result []string `json:"result"`
+	}
+	return func(c *gin.Context) {
+		qname := c.Param("qname")
+		metadata, err := backend.GetDomainMetadata(qname)
+		if err != nil {
+			c.Status(500)
+			c.Abort()
+		} else {
+			responseBody := resultDomainMetadataResultArray{
+				Result: metadata,
+			}
+			c.JSON(200, responseBody)
+		}
+	}
+}
+
 func (httpConnector *ConnectorHTTP) Config() (err error) {
 
 	httpConnector.Router.POST("dnsapi/service", serviceHandler(httpConnector.Backend))
@@ -118,7 +143,7 @@ func (httpConnector *ConnectorHTTP) Config() (err error) {
 	httpConnector.Router.GET("dnsapi/lookup/:qname/:qtype", lookupHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/getAllDomains", getAllDomainsHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/getAllDomainMetadata/:qname", getAllDomainMetadataHandler(httpConnector.Backend))
-
+	httpConnector.Router.GET("dnsapi/getDomainMetadata/:qname/PRESIGNED", getDomainMetadataHandler(httpConnector.Backend))
 	return
 }
 
