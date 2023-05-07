@@ -29,6 +29,11 @@ func (TestBackend) GetAllDomainMetadata(_ string) (metadata map[string][]string,
 	return
 }
 
+func (TestBackend) GetDomainMetadata(_ string) (metadata []string, err error) {
+	metadata = []string{}
+	return
+}
+
 func TestNewDelegate(t *testing.T) {
 	backendDelegate := NewDelegate()
 	if backendDelegate == nil {
