@@ -19,6 +19,11 @@ func (TestBackend) Lookup(_ string, _ string, _ string) (lookupResultArray []Loo
 	return
 }
 
+func (TestBackend) List(_ string, _ string, _ string) (listResultArray []ListResult, err error) {
+	listResultArray = []ListResult{}
+	return
+}
+
 func (TestBackend) GetAllDomains(_ bool) (domainInfoResultArray []DomainInfoResult, err error) {
 	domainInfoResultArray = []DomainInfoResult{}
 	return
@@ -29,8 +34,13 @@ func (TestBackend) GetAllDomainMetadata(_ string) (metadata map[string][]string,
 	return
 }
 
-func (TestBackend) GetDomainMetadata(_ string) (metadata []string, err error) {
+func (TestBackend) GetDomainMetadata(_ string, _ string) (metadata []string, err error) {
 	metadata = []string{}
+	return
+}
+
+func (TestBackend) GetDomainInfo(_ string) (domainInfoResult DomainInfoResult, err error) {
+	domainInfoResult = DomainInfoResult{}
 	return
 }
 

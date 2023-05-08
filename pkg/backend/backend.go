@@ -17,6 +17,16 @@ type LookupResult struct {
 	TTL     uint32 `json:"ttl"`
 }
 
+type ListResult struct {
+	QType     string  `json:"qtype"`
+	QName     string  `json:"qname"`
+	Content   string  `json:"content"`
+	TTL       uint32  `json:"ttl"`
+	DomainId  *string `json:"domain_id"`
+	ScopeMask *string `json:"scopeMask"`
+	Auth      *string `json:"auth"`
+}
+
 type DomainInfoResult struct {
 	//ID             int32    `json:"id"`
 	Zone string `json:"zone"`
@@ -34,8 +44,12 @@ type Backend interface {
 	Initialize() bool
 	Lookup(qtype string, qname string, zoneId string) (lookupResultArray []LookupResult, err error)
 
+	// Master operations:
+	List(qname string, domainId string, zoneId string) (listResultArray []ListResult, err error)
+
 	// Filling the Zone Cache:
 	GetAllDomains(includeDisabled bool) (domainInfoResultArray []DomainInfoResult, err error)
 	GetAllDomainMetadata(qname string) (metadata map[string][]string, err error)
-	GetDomainMetadata(qname string) (metadata []string, err error)
+	GetDomainMetadata(qname string, qtype string) (metadata []string, err error)
+	GetDomainInfo(qname string) (domainInfo DomainInfoResult, err error)
 }

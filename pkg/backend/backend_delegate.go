@@ -42,6 +42,19 @@ func (delegate *Delegate) Lookup(qtype string, qname string, zoneId string) (loo
 	return
 }
 
+func (delegate *Delegate) List(qname string, domainId string, zoneId string) (listResultArray []ListResult, err error) {
+	listResultArray = []ListResult{}
+	for _, backend := range delegate.Backends {
+		backendListResultArray, backendErr := backend.List(qname, domainId, zoneId)
+		if backendErr != nil {
+			err = backendErr
+		} else {
+			listResultArray = append(listResultArray, backendListResultArray...)
+		}
+	}
+	return
+}
+
 func (delegate *Delegate) GetAllDomains(includeDisabled bool) (domainInfoResultArray []DomainInfoResult, err error) {
 	domainInfoResultArray = []DomainInfoResult{}
 	for _, backend := range delegate.Backends {
@@ -68,14 +81,26 @@ func (delegate *Delegate) GetAllDomainMetadata(qname string) (metadata map[strin
 	return
 }
 
-func (delegate *Delegate) GetDomainMetadata(qname string) (metadata []string, err error) {
+func (delegate *Delegate) GetDomainMetadata(qname string, qtype string) (metadata []string, err error) {
 	metadata = []string{}
 	for _, backend := range delegate.Backends {
-		backendMetadata, backendErr := backend.GetDomainMetadata(qname)
+		backendMetadata, backendErr := backend.GetDomainMetadata(qname, qtype)
 		if backendErr != nil {
 			err = backendErr
 		} else {
 			metadata = backendMetadata
+		}
+	}
+	return
+}
+
+func (delegate *Delegate) GetDomainInfo(qname string) (domainInfoResult DomainInfoResult, err error) {
+	for _, backend := range delegate.Backends {
+		backendDomainInfoResult, backendErr := backend.GetDomainInfo(qname)
+		if backendErr != nil {
+			err = backendErr
+		} else {
+			domainInfoResult = backendDomainInfoResult
 		}
 	}
 	return

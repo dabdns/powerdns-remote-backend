@@ -79,6 +79,31 @@ func lookupHandler(backend b.Backend) func(c *gin.Context) {
 	}
 }
 
+func listHandler(backend b.Backend) func(c *gin.Context) {
+	type resultListResultArray struct {
+		Result []b.ListResult `json:"result"`
+	}
+	return func(c *gin.Context) {
+		qname := c.Param("qname")
+		domainId := c.Param("domain_id")
+		zoneIds := c.Request.Header[http.CanonicalHeaderKey("X-RemoteBackend-zone-id")]
+		zoneId := "1"
+		if zoneIds != nil && len(zoneIds) >= 0 {
+			zoneId = zoneIds[0]
+		}
+		listResultArray, err := backend.List(qname, domainId, zoneId)
+		if err != nil {
+			c.Status(500)
+			c.Abort()
+		} else {
+			responseBody := resultListResultArray{
+				Result: listResultArray,
+			}
+			c.JSON(200, responseBody)
+		}
+	}
+}
+
 func getAllDomainsHandler(backend b.Backend) func(c *gin.Context) {
 	type resultGetAllDomainsResultArray struct {
 		Result []b.DomainInfoResult `json:"result"`
@@ -123,7 +148,8 @@ func getDomainMetadataHandler(backend b.Backend) func(c *gin.Context) {
 	}
 	return func(c *gin.Context) {
 		qname := c.Param("qname")
-		metadata, err := backend.GetDomainMetadata(qname)
+		qtype := c.Param("qtype")
+		metadata, err := backend.GetDomainMetadata(qname, qtype)
 		if err != nil {
 			c.Status(500)
 			c.Abort()
@@ -136,14 +162,37 @@ func getDomainMetadataHandler(backend b.Backend) func(c *gin.Context) {
 	}
 }
 
+func getDomainInfoHandler(backend b.Backend) func(c *gin.Context) {
+	type resultDomainInfoResult struct {
+		Result b.DomainInfoResult `json:"result"`
+	}
+	return func(c *gin.Context) {
+		qname := c.Param("qname")
+		domainInfoResult, err := backend.GetDomainInfo(qname)
+		if err != nil {
+			c.Status(500)
+			c.Abort()
+		} else {
+			responseBody := resultDomainInfoResult{
+				Result: domainInfoResult,
+			}
+			c.JSON(200, responseBody)
+		}
+	}
+}
+
 func (httpConnector *ConnectorHTTP) Config() (err error) {
 
 	httpConnector.Router.POST("dnsapi/service", serviceHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/initialize", initializeHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/lookup/:qname/:qtype", lookupHandler(httpConnector.Backend))
+
+	httpConnector.Router.GET("dnsapi/list/:domain_id/:qname", listHandler(httpConnector.Backend))
+
 	httpConnector.Router.GET("dnsapi/getAllDomains", getAllDomainsHandler(httpConnector.Backend))
 	httpConnector.Router.GET("dnsapi/getAllDomainMetadata/:qname", getAllDomainMetadataHandler(httpConnector.Backend))
-	httpConnector.Router.GET("dnsapi/getDomainMetadata/:qname/PRESIGNED", getDomainMetadataHandler(httpConnector.Backend))
+	httpConnector.Router.GET("dnsapi/getDomainMetadata/:qname/:qtype", getDomainMetadataHandler(httpConnector.Backend))
+	httpConnector.Router.GET("dnsapi/getDomainInfo/:qname", getDomainInfoHandler(httpConnector.Backend))
 	return
 }
 

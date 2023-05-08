@@ -14,12 +14,14 @@ const (
 
 	METHOD_INITIALIZE           string = "initialize"
 	METHOD_LOOKUP               string = "lookup"
+	METHOD_LIST                 string = "list"
 	METHOD_GETALLDOMAINS        string = "getalldomains"
 	METHOD_GETALLDOMAINMETADATA string = "getalldomainmetadata"
 	METHOD_GETDOMAINMETADATA    string = "getdomainmetadata"
 
-	PARAM_QTYPE string = "qtype"
-	PARAM_QNAME string = "qname"
+	PARAM_QTYPE    string = "qtype"
+	PARAM_QNAME    string = "qname"
+	PARAM_DOMAINID string = "domain_id"
 	//PARAM_REMOTE     string = "remote"
 	//PARAM_LOCAL      string = "local"
 	//PARAM_REALREMOTE string = "real-remote"
@@ -69,6 +71,13 @@ func (delegateBase *DelegateBase) Service(req *Request, resp *Response) (err err
 		//zoneid, zoneidOK := req.Parameters[PARAM_ZONEID].(float64)
 		if qtypeOK && qnameOK {
 			resp.Result, err = delegateBase.Lookup(qtype, qname, "")
+		}
+	case METHOD_LIST:
+		qtype, qtypeOK := req.Parameters[PARAM_QTYPE].(string)
+		domainId, domainIdOK := req.Parameters[PARAM_DOMAINID].(string)
+		//zoneid, zoneidOK := req.Parameters[PARAM_ZONEID].(float64)
+		if qtypeOK && domainIdOK {
+			resp.Result, err = delegateBase.List(qtype, domainId, "")
 		}
 	case METHOD_GETALLDOMAINS:
 		resp.Result, err = delegateBase.GetAllDomains(false)
@@ -124,10 +133,40 @@ func (delegateBase *DelegateBase) GetAllDomainMetadata(qname string) (metadata m
 	return
 }
 
-func (delegateBase *DelegateBase) GetDomainMetadata(qname string) (metadata []string, err error) {
+func (delegateBase *DelegateBase) GetDomainMetadata(qname string, qtype string) (metadata []string, err error) {
 	metadata = []string{}
 	if qname == *delegateBase.Conf.Domain {
-		metadata = []string{"0"}
+		if qtype == "PRESIGNED" {
+			metadata = []string{"0"}
+		}
+	}
+	return
+}
+
+func (delegateBase *DelegateBase) GetDomainInfo(qname string) (domainInfoResult DomainInfoResult, err error) {
+	if qname == *delegateBase.Conf.Domain {
+		if delegateBase.Conf.GetAllDomains.Entries[qname] != nil {
+			//domainInfo := delegateBase.Conf.GetAllDomains.Entries[qname]
+			domainInfoResult = DomainInfoResult{
+				//ID:             *domainInfo.Id,
+				Zone: *delegateBase.Conf.Domain,
+				//Masters:        *domainInfo.Masters,
+				//NotifiedSerial: *domainInfo.NotifiedSerial,
+				//Serial:         *domainInfo.Serial,
+				//LastCheck:      *domainInfo.LastCheck,
+				//Kind:           *domainInfo.Kind,
+			}
+		} else {
+			domainInfoResult = DomainInfoResult{
+				//ID:             *delegateBase.Conf.GetAllDomains.Default.Id,
+				Zone: *delegateBase.Conf.Domain,
+				//Masters:        *delegateBase.Conf.GetAllDomains.Default.Masters,
+				//NotifiedSerial: *delegateBase.Conf.GetAllDomains.Default.NotifiedSerial,
+				//Serial:         *delegateBase.Conf.GetAllDomains.Default.Serial,
+				//LastCheck:      *delegateBase.Conf.GetAllDomains.Default.LastCheck,
+				//Kind:           *delegateBase.Conf.GetAllDomains.Default.Kind,
+			}
+		}
 	}
 	return
 }
