@@ -27,12 +27,12 @@ func loadConfig() (conf config.Config, err error) {
 	err = v.MergeInConfig()
 	if err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			panic(fmt.Errorf("Error reading config file, %s", err))
+			panic(fmt.Errorf("error reading config file, %s", err))
 		}
 	}
 	err = v.Unmarshal(&vConf)
 	if err != nil {
-		panic(fmt.Errorf("Unable to decode into struct, %v", err))
+		panic(fmt.Errorf("unable to decode into struct, %v", err))
 	}
 	conf.Merge(&vConf)
 	return
