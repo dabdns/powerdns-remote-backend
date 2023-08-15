@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: powerdns
+spec:
+  selector:
+    app: powerdns
+  type: NodePort
+  ports:
+  - name: dns-udp
+    nodePort: 30053
+    port: 53
+    protocol: UDP
+    targetPort: 53
+  - name: dns-tcp
+    nodePort: 30053
+    port: 53
+    protocol: TCP
+    targetPort: 53
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: powerdns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: powerdns
+  template:
+    metadata:
+      labels:
+        app: powerdns
+    spec:
+      containers:
+      - name: powerdns
+        image: powerdns/pdns-auth-master
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "250m"
+        ports:
+        - name: dns-udp
+          containerPort: 53
+          protocol: UDP
+        - name: dns-tcp
+          containerPort: 53
+          protocol: TCP
+        - name: api
+          containerPort: 8081
+          protocol: TCP        

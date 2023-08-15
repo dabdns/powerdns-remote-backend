@@ -1,5 +1,10 @@
+connector:
+  type: http
+  host: 0.0.0.0
+  port: 5353
+
 delegates:
-  - domain: dev.dabdns.com.
+  - domain: a.dabdns.com.
     lookup:
       resolvers:
         - builtin:ipv4dotted
@@ -9,19 +14,20 @@ delegates:
       soa:
         default:
           mname: ns1.dabdns.com.
-          rname: dev.dabdns.com.
-      a:
-        entries:
-          ns1.dabdns.com.: 82.66.188.8
-          test.dev.dabdns.com. : 192.168.0.1
-          0000000.dev.dabdns.com. : 127.0.0.1
-      aaaa:
-        entries:
-          ns1.dabdns.com.: 2a01:e0a:250:6220::1
+          rname: a.dabdns.com.
       ns:
         entries:
-          dev.dabdns.com.: ns1.dabdns.com.
+          a.dabdns.com.: ns1.dabdns.com.
     getAllDomainMetadata:
       entries:
-        dev.dabdns.com.:
+        a.dabdns.com.:
           - PRESIGNED: ["0"]
+    getAllDomains:
+      entries:
+        a.dabdns.com.:
+          id: -1
+          masters: []
+          notifiedSerial: -1
+          serial: 0
+          lastCheck: 0
+          kind: NATIVE

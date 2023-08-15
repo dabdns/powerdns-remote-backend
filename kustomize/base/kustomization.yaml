@@ -1,0 +1,13 @@
+images:
+- name: dabdns/dabdns
+  newTag: latest
+- name: powerdns/pdns-auth-master
+  newTag: latest
+
+configMapGenerator: []
+
+secretGenerator: []
+
+resources:
+- powerdns.yaml
+- dabdns.yaml
