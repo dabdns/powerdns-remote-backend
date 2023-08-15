@@ -3,10 +3,33 @@
 {
 	"name": "Go",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/go:0-1.18"
+	"image": "mcr.microsoft.com/devcontainers/base:bullseye",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
+	"features": {
+		"ghcr.io/devcontainers/features/common-utils": {
+			"upgradePackages": true,
+			"installZsh": true,
+			"installOhMyZsh": true
+		},
+		"ghcr.io/devcontainers/features/git-lfs": {
+			"autoPull": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker": {
+			"version": "latest",
+			"moby": true
+		},
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube": {
+			"helm": "latest",
+			"minikube": "latest",
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/go": {
+			"version": "1.19"
+		}
+	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],

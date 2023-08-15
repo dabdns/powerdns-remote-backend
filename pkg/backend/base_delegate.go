@@ -109,7 +109,7 @@ func (delegateBase *DelegateBase) GetAllDomains(_ bool) (domainInfoResultArray [
 		}
 		domainInfoResultArray = append(domainInfoResultArray, domainInfoResult)
 	} else {
-		for domain, _ := range delegateBase.Conf.GetAllDomains.Entries {
+		for domain := range delegateBase.Conf.GetAllDomains.Entries {
 			domainInfoResult := DomainInfoResult{
 				//ID:             *getAllDomainsConfig.Id,
 				Zone: domain,
