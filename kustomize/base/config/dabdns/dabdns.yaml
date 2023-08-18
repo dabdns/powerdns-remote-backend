@@ -1,0 +1,42 @@
+connector:
+  type: http
+  host: 0.0.0.0
+  port: 5353
+
+delegates:
+  - domain: a.dabdns.com.
+    lookup:
+      resolvers:
+        - builtin:ipv4dotted
+        - builtin:ipv4dashed
+        - builtin:ipv4hexa
+        - builtin:ipv4b32crockford
+      soa:
+        default:
+          mname: ns1.dabdns.com.
+          rname: a.dabdns.com.
+      a:
+        entries:
+          ns1.dabdns.com.: 82.66.188.8
+          localhost.dabdns.com. : 127.0.0.1
+          remotedev.a.dabdns.com. : 149.202.65.232
+      aaaa:
+        entries:
+          ns1.dabdns.com.: 2a01:e0a:250:6220::1
+          remotedev.a.dabdns.com. : 2001:41d0:d:2ae8::1
+      ns:
+        entries:
+          a.dabdns.com.: ns1.dabdns.com.
+    getAllDomainMetadata:
+      entries:
+        a.dabdns.com.:
+          - PRESIGNED: ["0"]
+    getAllDomains:
+      entries:
+        a.dabdns.com.:
+          id: -1
+          masters: []
+          notifiedSerial: -1
+          serial: 0
+          lastCheck: 0
+          kind: NATIVE

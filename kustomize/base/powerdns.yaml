@@ -49,3 +49,10 @@ spec:
         - name: api
           containerPort: 8081
           protocol: TCP        
+        volumeMounts:
+        - name: powerdns-dabdns-config
+          mountPath: /etc/powerdns/pdns.d/
+      volumes:
+      - name: powerdns-dabdns-config
+        configMap:
+          name: powerdns-dabdns-config

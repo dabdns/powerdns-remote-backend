@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/dabdns/powerdns-remote-backend/pkg/backend"
 	"github.com/dabdns/powerdns-remote-backend/pkg/config"
 	connectorBase "github.com/dabdns/powerdns-remote-backend/pkg/connector"
@@ -19,6 +20,7 @@ func loadConfig() (conf config.Config, err error) {
 	v := viper.New()
 	// load configuration with viper
 	v.AddConfigPath(".")
+	v.AddConfigPath("/etc/dabdns")
 	v.SetConfigName("dabdns")
 	v.SetEnvPrefix("dabdns")
 	v.AutomaticEnv()

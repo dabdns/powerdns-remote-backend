@@ -4,7 +4,13 @@ images:
 - name: powerdns/pdns-auth-master
   newTag: latest
 
-configMapGenerator: []
+configMapGenerator:
+- name: powerdns-dabdns-config
+  files:
+  - config/powerdns/dabdns.conf
+- name: dabdns-config
+  files:
+  - config/dabdns/dabdns.yaml
 
 secretGenerator: []
 

@@ -32,3 +32,11 @@ spec:
             cpu: "100m"
         ports:
         - containerPort: 5353
+        volumeMounts:
+        - name: dabdns-config
+          mountPath: /etc/dabdns/
+      volumes:
+      - name: dabdns-config
+        configMap:
+          name: dabdns-config
+          
